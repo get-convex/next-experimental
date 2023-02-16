@@ -1,7 +1,7 @@
 {
   "name": "@convex-dev/next-experimental",
   "description": "Experimental SSR + Server Components aware Convex client",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "author": "Convex, Inc. <team@convex.dev>",
   "homepage": "https://convex.dev",
   "license": "MIT",
