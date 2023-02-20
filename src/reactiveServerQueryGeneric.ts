@@ -2,7 +2,8 @@ import { GenericAPI, NamedQuery, QueryNames } from "convex/api";
 import { convexToJson } from "convex/values";
 import { headers } from "next/headers";
 import { preloadQueryGeneric } from "./preloadQuery";
-import { escapeQuote } from "./useQuery";
+
+export const escapeQuote = (str: string) => str.replace(/"/g, '\\"');
 
 export async function reactiveServerQueryGeneric<
   API extends GenericAPI,
