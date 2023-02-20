@@ -39,7 +39,7 @@ function cache<T>(factory: () => Promise<T>, args: any[]): Promise<T> {
   return promise;
 }
 
-const escapeQuote = (str: string) => str.replace(/"/g, '\\"');
+export const escapeQuote = (str: string) => str.replace(/"/g, '\\"');
 
 export function useQueryGeneric<
   API extends GenericAPI,
