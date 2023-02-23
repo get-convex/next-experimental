@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useEffect, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useConvexGeneric } from "convex/react";
 import { convexToJson, jsonToConvex } from "convex/values";
 
 export function ReactiveServerContext(props: {children: React.ReactNode}) {
     const convex = useConvexGeneric();
-    const pathname = usePathname();
+    // TODO: Figure out the proper path or component.
+    const pathname = "";
     const router = useRouter();
 
     const serverQueries = useMemo(() => {
