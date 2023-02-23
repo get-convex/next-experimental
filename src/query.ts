@@ -16,7 +16,7 @@ export async function convexFetch(
   if (ts) {
     url += `&ts=${ts}`;
   }
-  const response = await fetch(url);
+  const response = await fetch(url, { cache: 'no-store'});
   const respJSON = await response.json();
   const value = jsonToConvex(respJSON.value);
   if (!respJSON.success) {
