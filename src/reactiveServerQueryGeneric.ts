@@ -5,6 +5,8 @@ import { preloadQueryGeneric } from "./preloadQuery";
 
 export const escapeQuote = (str: string) => str.replace(/"/g, '\\"');
 
+const sentQueries = new Set();
+
 export async function reactiveServerQueryGeneric<
   API extends GenericAPI,
   Name extends QueryNames<API>
@@ -25,10 +27,13 @@ export async function reactiveServerQueryGeneric<
     };
     const v = escapeQuote(JSON.stringify(query));
 
-    const injectToStream = (globalThis as any).nextInjectToStream;
-    injectToStream(
+    if (!sentQueries.has(v)) {
+      sentQueries.add(v);
+      const injectToStream = (globalThis as any).nextInjectToStream;
+      injectToStream(
         `<script>self.__convexRSC = self.__convexRSC ?? {}; (self.__convexRSC["${k}"] = self.__convexRSC["${k}"] ?? []).push("${v}");</script>`
-    );
+      );
+    }
 
     return result;
 }
