@@ -12,7 +12,7 @@ export function ReactiveServerContext(props: {children: React.ReactNode}) {
     const router = useRouter();
 
     const serverQueries = useMemo(() => {
-        if (typeof window === "undefined" || !pathname) {
+        if (typeof window === "undefined") {
             return [];
         }
         const rsc = (window as any).__convexRSC;
