@@ -12,12 +12,13 @@ export async function reactiveServerQueryGeneric<
   name: Name,
   ...args: Parameters<NamedQuery<API, Name>>
 ): Promise<ReturnType<NamedQuery<API, Name>>> {
-    const url = new URL(headers().get("x-url")!);
+    // TODO: Figure out the proper path or component.
+    const pathname = "";
     const [result] = await preloadQueryGeneric(name, ...args);
 
-    const k = escapeQuote(url.pathname);
+    const k = escapeQuote(pathname);
     const query = {
-        page: url.pathname,
+        page: pathname,
         query: name,
         args: convexToJson(args),
         value: convexToJson(result),
