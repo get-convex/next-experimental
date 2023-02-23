@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useConvexGeneric } from "convex/react";
 import { convexToJson, jsonToConvex } from "convex/values";
 
