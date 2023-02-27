@@ -16,8 +16,8 @@ export function ReactiveServerContext(props: {children: React.ReactNode}) {
             return [];
         }
         const rsc = (window as any).__convexRSC;
-        const queries: any[] = (rsc && rsc[pathname]) ?? [];
-        return queries.map(q => {
+        const queries: Set<string> = (rsc && rsc[pathname]) ?? new Set();
+        return Array.from(queries.values()).map(q => {
             const parsed = JSON.parse(q);
             const name = parsed.query;
             const args = jsonToConvex(parsed.args);

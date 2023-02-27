@@ -1,9 +1,11 @@
 import { GenericAPI, NamedQuery, QueryNames } from "convex/api";
 import { convexToJson } from "convex/values";
-import { headers } from "next/headers";
 import { preloadQueryGeneric } from "./preloadQuery";
+import { cache } from "react"
 
 export const escapeQuote = (str: string) => str.replace(/"/g, '\\"');
+
+const queryCache = cache(() => new Set());
 
 export async function reactiveServerQueryGeneric<
   API extends GenericAPI,
@@ -26,9 +28,13 @@ export async function reactiveServerQueryGeneric<
     const v = escapeQuote(JSON.stringify(query));
 
     const injectToStream = (globalThis as any).nextInjectToStream;
-    injectToStream(
-        `<script>self.__convexRSC = self.__convexRSC ?? {}; (self.__convexRSC["${k}"] = self.__convexRSC["${k}"] ?? []).push("${v}");</script>`
-    );
+    const sent = queryCache();
+    if (!sent.has(v)) {
+      sent.add(v);
+      injectToStream(
+        `<script>self.__convexRSC = self.__convexRSC ?? {}; (self.__convexRSC["${k}"] = self.__convexRSC["${k}"] ?? new Set()).add("${v}");</script>`
+      );
+    }
 
     return result;
 }
