@@ -19,20 +19,19 @@ export async function reactiveServerQueryGeneric<
     const [result] = await preloadQueryGeneric(name, ...args);
 
     const k = escapeQuote(pathname);
-    const query = {
+    const q = escapeQuote(JSON.stringify({
         page: pathname,
         query: name,
         args: convexToJson(args),
-        value: convexToJson(result),
-    };
-    const v = escapeQuote(JSON.stringify(query));
+    }));
+    const v = escapeQuote(JSON.stringify(convexToJson(result)));
 
     const injectToStream = (globalThis as any).nextInjectToStream;
     const sent = queryCache();
-    if (!sent.has(v)) {
-      sent.add(v);
+    if (!sent.has(q+v)) {
+      sent.add(q+v);
       injectToStream(
-        `<script>self.__convexRSC = self.__convexRSC ?? {}; (self.__convexRSC["${k}"] = self.__convexRSC["${k}"] ?? new Set()).add("${v}");</script>`
+        `<script>self.__convexRSC = self.__convexRSC ?? {}; (self.__convexRSC["${k}"] = self.__convexRSC["${k}"] ?? new Map()).set("${q}", "${v}");</script>`
       );
     }
 
