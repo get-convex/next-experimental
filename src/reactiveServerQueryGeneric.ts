@@ -2,6 +2,7 @@ import { GenericAPI, NamedQuery, QueryNames } from "convex/api";
 import { convexToJson } from "convex/values";
 import { preloadQueryGeneric } from "./preloadQuery";
 import { cache } from "react"
+import { currentTimestamp } from "./ConvexServerProvider";
 
 export const escapeQuote = (str: string) => str.replace(/"/g, '\\"');
 
@@ -15,23 +16,24 @@ export async function reactiveServerQueryGeneric<
   ...args: Parameters<NamedQuery<API, Name>>
 ): Promise<ReturnType<NamedQuery<API, Name>>> {
     // TODO: Figure out the proper path or component.
-    const pathname = "";
     const [result] = await preloadQueryGeneric(name, ...args);
 
-    const k = escapeQuote(pathname);
-    const q = escapeQuote(JSON.stringify({
-        page: pathname,
+    const k = escapeQuote(JSON.stringify({
         query: name,
         args: convexToJson(args),
     }));
-    const v = escapeQuote(JSON.stringify(convexToJson(result)));
+    const ts = currentTimestamp();
+    const v = escapeQuote(JSON.stringify({
+        ts: ts,
+        value: convexToJson(result),
+    }));
 
     const injectToStream = (globalThis as any).nextInjectToStream;
     const sent = queryCache();
-    if (!sent.has(q+v)) {
-      sent.add(q+v);
+    if (!sent.has(k+v)) {
+      sent.add(k+v);
       injectToStream(
-        `<script>self.__convexRSC = self.__convexRSC ?? {}; (self.__convexRSC["${k}"] = self.__convexRSC["${k}"] ?? new Map()).set("${q}", "${v}");</script>`
+        `<script>self.__convexRSC = self.__convexRSC ?? new Map(); oldTs = self.__convexRSC.get("${k}")?.ts ?? 0; if (${ts} > oldTs) { self.__convexRSC.set("${k}", "${v}"); };</script>`
       );
     }
 

@@ -16,14 +16,14 @@ export function ReactiveServerContext(props: {children: React.ReactNode}) {
             return [];
         }
         const rsc = (window as any).__convexRSC;
-        const queries: Map<string, string> = (rsc && rsc[pathname]) ?? new Map();
+        const queries: Map<string, string> = rsc ?? new Map();
         return Array.from(queries.entries()).map(q => {
-            const query = JSON.parse(q[0]);
-            const name = query.query;
-            const args = jsonToConvex(query.args);
+            const key = JSON.parse(q[0]);
+            const name = key.query;
+            const args = jsonToConvex(key.args);
             const watch = convex.watchQuery(name, args as any);
-            const value = JSON.parse(q[1]);
-            const serverValue = jsonToConvex(value);
+            const result = JSON.parse(q[1]);
+            const serverValue = jsonToConvex(result.value);
             return { name, args, watch, serverValue };
         });
     }, [pathname, convex])
