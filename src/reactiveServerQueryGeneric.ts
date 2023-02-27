@@ -5,7 +5,7 @@ import { cache } from "react"
 
 export const escapeQuote = (str: string) => str.replace(/"/g, '\\"');
 
-const queryCache = (() => new Set());
+const queryCache = cache(() => new Set());
 
 export async function reactiveServerQueryGeneric<
   API extends GenericAPI,
