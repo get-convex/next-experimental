@@ -23,17 +23,14 @@ export async function reactiveServerQueryGeneric<
         args: convexToJson(args),
     }));
     const ts = currentTimestamp();
-    const v = escapeQuote(JSON.stringify({
-        ts: ts,
-        value: convexToJson(result),
-    }));
+    const v = escapeQuote(JSON.stringify(convexToJson(result)));
 
     const injectToStream = (globalThis as any).nextInjectToStream;
     const sent = queryCache();
-    if (!sent.has(k+v)) {
-      sent.add(k+v);
+    if (!sent.has(k+ts)) {
+      sent.add(k+ts);
       injectToStream(
-        `<script>self.__convexRSC = self.__convexRSC ?? new Map(); oldTs = self.__convexRSC.get("${k}")?.ts ?? 0; if (${ts} > oldTs) { self.__convexRSC.set("${k}", "${v}"); };</script>`
+        `<script>self.__convexRSC = self.__convexRSC ?? new Map(); oldTs = self.__convexRSC.get("${k}")?.ts ?? 0; if (${ts} > oldTs) { self.__convexRSC.set("${k}", { ts: ${ts}, value: "${v}"}); };</script>`
       );
     }
 
